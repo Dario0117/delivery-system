@@ -77,7 +77,7 @@ router.route('/pedidos')
                         }
                     ],
                     attributes: {
-                        exclude: ['DriverId', 'ClientId', 'AddressId']
+                        exclude: [ 'ClientId', 'AddressId']
                     },
                     raw: true
                 })

@@ -2,11 +2,18 @@ const request = require('supertest');
 const faker = require('faker');
 const Sequelize = require('sequelize');
 const app = require('../../src/index');
-const { Driver, Address } = require('../../src/db');
+const { connection, Driver, Address } = require('../../src/db');
 
 faker.locale = 'es_MX';
 
 const Op = Sequelize.Op;
+
+beforeAll((done) => {
+    connection.sync().then(() => {
+        Driver.bulkCreate(require('../../src/defaultData/Drivers.data'))
+        done();
+    });
+});
 
 describe('Delivery routes', () => {
     let currentUser;

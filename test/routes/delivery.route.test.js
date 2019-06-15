@@ -2,7 +2,7 @@ const request = require('supertest');
 const faker = require('faker');
 const Sequelize = require('sequelize');
 const app = require('../../src/index');
-const { connection, Driver, Delivery, Address } = require('../../src/db');
+const { Driver, Address } = require('../../src/db');
 
 faker.locale = 'es_MX';
 
@@ -44,13 +44,6 @@ describe('Delivery routes', () => {
         currentUser.addressId = id;
         done();
     });
-
-    // afterEach(async (done) => {
-    //     await Delivery.destroy({
-    //         where: {}
-    //       });
-    //     done();
-    // });
     
     it('should create a delivery', (done) => {
         request(app)

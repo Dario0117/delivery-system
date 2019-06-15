@@ -6,6 +6,8 @@ services:
     working_dir: /code
     command: [
       "./wait-for-it.sh", 
+      "-t",
+      "60",
       "db:3306", 
       "--",
       "npm",
@@ -31,6 +33,8 @@ services:
       - MYSQL_ROOT_PASSWORD=pa55w0rd11
     networks: 
       - db
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
 
 networks: 
   backend:

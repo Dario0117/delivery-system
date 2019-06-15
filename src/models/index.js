@@ -1,0 +1,22 @@
+module.exports = (sequelize) => {
+    const Driver = require('./Driver')(sequelize);
+    const Address = require('./Address')(sequelize);
+    const Client = require('./Client')(sequelize);
+    const Delivery = require('./Delivery')(sequelize);
+    
+    // Associations
+    Address.belongsTo(Client);
+    Client.hasMany(Address);
+
+    Delivery.belongsTo(Driver);
+    Delivery.belongsTo(Client);
+    Driver.hasMany(Delivery);
+    Client.hasMany(Delivery);
+
+    return {
+        Driver,
+        Address,
+        Client,
+        Delivery,
+    }
+}

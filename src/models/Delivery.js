@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      timeFalse: {
+      timeEnd: {
         type: Sequelize.INTEGER,
         allowNull: false
       },

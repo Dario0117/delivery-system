@@ -1,9 +1,6 @@
 const router = require('express').Router();
+const deliveries = require('./delivery.route');
 
-router.use('/', (req, res) => {
-    res.json({
-        message: 'Hello world'
-    })
-});
+router.use('/', deliveries);
 
 module.exports = router;

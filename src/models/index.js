@@ -4,7 +4,6 @@ module.exports = (sequelize) => {
     const Client = require('./Client')(sequelize);
     const Delivery = require('./Delivery')(sequelize);
     
-    // Associations
     Address.belongsTo(Client);
     Client.hasMany(Address);
 

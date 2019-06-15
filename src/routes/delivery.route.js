@@ -3,23 +3,23 @@ const Sequelize = require('sequelize');
 const passport = require('passport');
 const { Delivery, Address, Driver, Client } = require('../db');
 
-function parseDelivery(el) {
-    el.ClientName = el['Client.name'];
-    el.ClientEmail = el['Client.email'];
-    el.ClientPhone = el['Client.phone'];
-    el.ClientAddress = el['Address.address'];
-    delete el['Client.name'];
-    delete el['Client.email'];
-    delete el['Client.phone'];
-    delete el['Address.address'];
-    return el;
+function parseDelivery(delivery) {
+    delivery.ClientName = delivery['Client.name'];
+    delivery.ClientEmail = delivery['Client.email'];
+    delivery.ClientPhone = delivery['Client.phone'];
+    delivery.ClientAddress = delivery['Address.address'];
+    delete delivery['Client.name'];
+    delete delivery['Client.email'];
+    delete delivery['Client.phone'];
+    delete delivery['Address.address'];
+    return delivery;
 }
 
 router.route('/pedidos')
     .all(passport.authenticate('jwt', { session: false }))
     .post(async (req, res) => {
         let body = {
-            product: req.body.product || "NON_SPECIFIED",
+            product: req.body.product || "NOT_SPECIFIED",
             date: new Date(req.body.date || new Date()),
             address: req.body.address || 0,
             timeStart: req.body.timeStart || 0,
@@ -28,11 +28,11 @@ router.route('/pedidos')
         body.date.setMinutes(0);
         body.date.setSeconds(0);
         body.date.setMilliseconds(0);
-        if (body.timeEnd < 0 || body.timeEnd >  24) {
+        if (body.timeEnd < 0 || body.timeEnd > 24) {
             res.status(400).json({
                 msg: "La hora final debe estar entre la 1 y las 24h."
             });
-        } else if (body.timeStart < 1 || body.timeStart >  23) {
+        } else if (body.timeStart < 1 || body.timeStart > 23) {
             res.status(400).json({
                 msg: "La hora inicial debe estar entre la 1 y las 23h."
             });
@@ -40,16 +40,16 @@ router.route('/pedidos')
             res.status(400).json({
                 msg: "La hora final debe sere mayor a la fecha inicial."
             });
-        } else if (body.timeEnd - body.timeStart > 8 || body.timeEnd - body.timeStart < 1){
+        } else if ((body.timeEnd - body.timeStart) > 8 || (body.timeEnd - body.timeStart) < 1){
             res.status(400).json({
                 msg: "La franja horaria debe estar entre 1 y 8h."
             });
         } else {
             try {
-                let loggedUser = req.user;
+                let activeUser = req.user;
                 let { id } = await Address.findOne({
                     where: {
-                        ClientId: loggedUser.id,
+                        ClientId: activeUser.id,
                         id: body.address,
                     },
                     attributes: ['address', 'id']
@@ -59,7 +59,7 @@ router.route('/pedidos')
                 });
                 let delivery = await Delivery.create({
                     ...body,
-                    ClientId: loggedUser.id,
+                    ClientId: activeUser.id,
                     DriverId: driver.id,
                     AddressId: id,
                 });

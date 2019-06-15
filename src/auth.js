@@ -2,6 +2,7 @@ const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const { Client } = require('./db');
+
 require('dotenv').config();
 
 module.exports = () => {
@@ -15,12 +16,10 @@ module.exports = () => {
             where: {
                 id: jwt_payload.id,
             }
-        })
-            .then((result) => {
-                return done(null, result);
-            })
-            .catch(() => {
-                return done(null, false);
-            });
+        }).then((result) => {
+            return done(null, result);
+        }).catch(() => {
+            return done(null, false);
+        });
     }));
 };

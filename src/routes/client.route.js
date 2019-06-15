@@ -1,45 +1,43 @@
-require('dotenv').config();
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { Client, Address } = require('../db');
 
+require('dotenv').config();
+
 router.route('/registro')
     .post((req, res) => {
-        if (!req.body.email) {
+        let body = {...req.body};
+        if (!body.email) {
             return res.status(400).json({
                 msg: "El email debe ser diligenciado."
             });
         }
-        if (!req.body.addresses || req.body.addresses && req.body.addresses.length === 0) {
+        if (!body.addresses || body.addresses && body.addresses.length === 0) {
             return res.status(400).json({
                 msg: "Debe poner por lo menos una dirección."
             })
         }
-        let body = {...req.body};
         let salt = bcrypt.genSaltSync(10);
-        let pw = bcrypt.hashSync(body.password, salt);
-        body.password = pw;
+        body.password = bcrypt.hashSync(body.password, salt);
         let clientData = {}; 
         Client.create(body)
             .then((data) => {
                 clientData = data;
-                let addresses = req.body.addresses.map((el) => {
+                let addresses = body.addresses.map((address) => {
                     return {
                         ClientId: data.id,
-                        address: el,
+                        address: address,
                     }
-                })
+                });
                 return Address.bulkCreate(addresses);
-            })
-            .then(() => {
+            }).then(() => {
                 res.status(201).json({
                     name: clientData.name,
                     email: clientData.email,
                     phone: clientData.phone,
                 });
-            })
-            .catch((err) => {
+            }).catch(() => {
                 res.status(400).json({
                     msg: "Email en uso.",
                 });

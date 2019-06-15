@@ -3,6 +3,18 @@ const Sequelize = require('sequelize');
 const passport = require('passport');
 const { Delivery, Address, Driver, Client } = require('../db');
 
+function parseDelivery(el) {
+    el.ClientName = el['Client.name'];
+    el.ClientEmail = el['Client.email'];
+    el.ClientPhone = el['Client.phone'];
+    el.ClientAddress = el['Address.address'];
+    delete el['Client.name'];
+    delete el['Client.email'];
+    delete el['Client.phone'];
+    delete el['Address.address'];
+    return el;
+}
+
 router.route('/pedidos')
     .all(passport.authenticate('jwt', { session: false }))
     .post(async (req, res) => {
@@ -51,7 +63,25 @@ router.route('/pedidos')
                     DriverId: driver.id,
                     AddressId: id,
                 });
-                res.status(201).json(delivery);
+                let deliveryRaw = await Delivery.findOne({
+                    where: {
+                        id: delivery.id
+                    },
+                    include: [
+                        {
+                            model: Client,
+                            attributes: ['email', 'name', 'phone']
+                        },{
+                            model: Address,
+                            attributes: ['address']
+                        }
+                    ],
+                    attributes: {
+                        exclude: ['DriverId', 'ClientId', 'AddressId']
+                    },
+                    raw: true
+                })
+                res.status(201).json(parseDelivery(deliveryRaw));
             } catch (error) {
                 res.status(400).json({
                     msg: "La dirección suministrada no existe o no pertenece a este cliente; o no existen Drivers."
@@ -88,17 +118,7 @@ router.route('/pedidos/:DriverId')
             raw: true
         })
 
-        res.status(200).json(deliveries.map((el) => {
-            el.ClientName = el['Client.name'];
-            el.ClientEmail = el['Client.email'];
-            el.ClientPhone = el['Client.phone'];
-            el.ClientAddress = el['Address.address'];
-            delete el['Client.name'];
-            delete el['Client.email'];
-            delete el['Client.phone'];
-            delete el['Address.address'];
-            return el;
-        }));
+        res.status(200).json(deliveries.map(parseDelivery));
     });
 
 module.exports = router;

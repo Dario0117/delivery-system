@@ -36,6 +36,7 @@ router.route('/registro')
                     name: clientData.name,
                     email: clientData.email,
                     phone: clientData.phone,
+                    id: clientData.id,
                 });
             }).catch(() => {
                 res.status(400).json({

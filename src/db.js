@@ -15,7 +15,8 @@ const sequelize = new Sequelize(
     `mysql://${MYSQL_USER}:${MYSQL_PW}@${MYSQL_HOST}/${MYSQL_SCHEMA}`,{
         define: {
             timestamps: false
-        }
+        },
+        logging: false
     }
 );
 

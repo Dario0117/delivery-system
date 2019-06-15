@@ -25,6 +25,7 @@ router.route('/pedidos')
             timeStart: req.body.timeStart || 0,
             timeEnd: req.body.timeEnd || 25,
         };
+        body.date.setHours(0);
         body.date.setMinutes(0);
         body.date.setSeconds(0);
         body.date.setMilliseconds(0);
@@ -94,6 +95,7 @@ router.route('/pedidos/:DriverId')
     .get(async (req, res) => {
         let { DriverId } = req.params;
         let date = new Date(req.query.date || new Date());
+        date.setHours(0);
         date.setMinutes(0);
         date.setSeconds(0);
         date.setMilliseconds(0);

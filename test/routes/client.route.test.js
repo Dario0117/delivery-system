@@ -12,12 +12,6 @@ beforeAll((done) => {
     });
 });
 
-afterAll(async (done) => {
-    await connection.dropAllSchemas({});
-    connection.close();
-    done();
-});
-
 describe('Client routes', () => {
     let goodUser;
     let userWuthoutEmail;

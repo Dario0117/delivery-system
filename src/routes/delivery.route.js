@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const Sequelize = require('sequelize');
+const passport = require('passport');
 const { Delivery, Address, Driver, Client } = require('../db');
 
 router.route('/pedidos')
+    .all(passport.authenticate('jwt', { session: false }))
     .post(async (req, res) => {
         let body = {
             product: req.body.product || "NON_SPECIFIED",
@@ -32,9 +34,10 @@ router.route('/pedidos')
             });
         } else {
             try {
+                let loggedUser = req.user;
                 let { id } = await Address.findOne({
                     where: {
-                        ClientId: 1,
+                        ClientId: loggedUser.id,
                         id: body.address,
                     },
                     attributes: ['address', 'id']
@@ -44,7 +47,7 @@ router.route('/pedidos')
                 });
                 let delivery = await Delivery.create({
                     ...body,
-                    ClientId: 1,
+                    ClientId: loggedUser.id,
                     DriverId: driver.id,
                     AddressId: id,
                 });
@@ -73,7 +76,7 @@ router.route('/pedidos/:DriverId')
             include: [
                 {
                     model: Client,
-                    attributes: ['email', 'name']
+                    attributes: ['email', 'name', 'phone']
                 },{
                     model: Address,
                     attributes: ['address']
@@ -88,9 +91,11 @@ router.route('/pedidos/:DriverId')
         res.status(200).json(deliveries.map((el) => {
             el.ClientName = el['Client.name'];
             el.ClientEmail = el['Client.email'];
+            el.ClientPhone = el['Client.phone'];
             el.ClientAddress = el['Address.address'];
             delete el['Client.name'];
             delete el['Client.email'];
+            delete el['Client.phone'];
             delete el['Address.address'];
             return el;
         }));

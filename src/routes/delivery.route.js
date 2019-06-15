@@ -5,11 +5,11 @@ const { Delivery, Address, Driver } = require('../db');
 router.route('/pedidos')
     .post(async (req, res) => {
         let body = {
-            product: req.body.product,
-            date: req.body.date,
-            address: req.body.address,
-            timeStart: req.body.timeStart,
-            timeEnd: req.body.timeEnd,
+            product: req.body.product || "NON_SPECIFIED",
+            date: req.body.date || new Date(),
+            address: req.body.address || 0,
+            timeStart: req.body.timeStart || 0,
+            timeEnd: req.body.timeEnd || 25,
         };
         if (body.timeEnd < 0 || body.timeEnd >  24) {
             res.status(400).json({

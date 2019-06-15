@@ -72,7 +72,7 @@ Y retorna una estructura de este tipo:
 }
 ```
 **Nota:** `timeStart` y `timeEnd` están en formato 24h, cada valor hace referencia a una hora del día, `date` puede ser en formato `mm/dd/yyyy` o `mm-dd-yyyy`, `address` hace referencia al `id` de la dirección del usuario, este id debe estar asociado al usuario que hace la petición, sino arroja un error.
-Para poder hacer una petición a este endpoint se debe enviar el header de autorización en el siguiente formato: `Authorization: Bearer jwt_token`
+Para poder hacer una petición a este endpoint se debe enviar el header de autorización en el siguiente formato: `Authorization: Bearer jwt_token`.
 
 Y retorna una estructura de este tipo:
 
@@ -95,7 +95,6 @@ Y retorna una estructura de este tipo:
 Eg.: `/pedidos/33?date=06/25/2019`
 
 **Nota:** `date` puede ser en formato `mm/dd/yyyy` o `mm-dd-yyyy`.
-Para poder hacer una petición a este endpoint se debe enviar el header de autorización en el siguiente formato: `Authorization: Bearer jwt_token`
 
 Y retorna una estructura de este tipo:
 

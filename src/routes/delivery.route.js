@@ -54,7 +54,7 @@ router.route('/pedidos')
                 res.status(201).json(delivery);
             } catch (error) {
                 res.status(400).json({
-                    msg: "La dirección suministrada no existe o no pertenece a este cliente."
+                    msg: "La dirección suministrada no existe o no pertenece a este cliente; o no existen Drivers."
                 });
             }
         }

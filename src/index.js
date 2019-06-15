@@ -3,7 +3,7 @@ const express = require('express');
 const routes = require('./routes');
 const passport = require('passport');
 const cors = require('cors');
-const { connection } = require('./db');
+const { connection, Driver } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,6 +20,7 @@ if (process.env.NODE_ENV !== 'test') {
         .sync()
         .then(() => {
             console.log('Connection has been established successfully.');
+            Driver.bulkCreate(require('./defaultData/Drivers.data'))
             app.listen(PORT, function () {
                 console.log(`Express server started on ${PORT}`);
             });

@@ -1,16 +1,19 @@
 const router = require('express').Router();
 const Sequelize = require('sequelize');
-const { Delivery, Address, Driver } = require('../db');
+const { Delivery, Address, Driver, Client } = require('../db');
 
 router.route('/pedidos')
     .post(async (req, res) => {
         let body = {
             product: req.body.product || "NON_SPECIFIED",
-            date: req.body.date || new Date(),
+            date: new Date(req.body.date || new Date()),
             address: req.body.address || 0,
             timeStart: req.body.timeStart || 0,
             timeEnd: req.body.timeEnd || 25,
         };
+        body.date.setMinutes(0);
+        body.date.setSeconds(0);
+        body.date.setMilliseconds(0);
         if (body.timeEnd < 0 || body.timeEnd >  24) {
             res.status(400).json({
                 msg: "La hora final debe estar entre la 1 y las 24h."
@@ -29,7 +32,7 @@ router.route('/pedidos')
             });
         } else {
             try {
-                let { address, id } = await Address.findOne({
+                let { id } = await Address.findOne({
                     where: {
                         ClientId: 1,
                         id: body.address,
@@ -43,6 +46,7 @@ router.route('/pedidos')
                     ...body,
                     ClientId: 1,
                     DriverId: driver.id,
+                    AddressId: id,
                 });
                 res.status(201).json(delivery);
             } catch (error) {
@@ -51,6 +55,45 @@ router.route('/pedidos')
                 });
             }
         }
+    });
+
+router.route('/pedidos/:DriverId')
+    .get(async (req, res) => {
+        let { DriverId } = req.params;
+        let date = new Date(req.query.date || new Date());
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+
+        let deliveries = await Delivery.findAll({
+            where: {
+                date,
+                DriverId,
+            },
+            include: [
+                {
+                    model: Client,
+                    attributes: ['email', 'name']
+                },{
+                    model: Address,
+                    attributes: ['address']
+                }
+            ],
+            attributes: {
+                exclude: ['DriverId', 'ClientId', 'AddressId']
+            },
+            raw: true
+        })
+
+        res.status(200).json(deliveries.map((el) => {
+            el.ClientName = el['Client.name'];
+            el.ClientEmail = el['Client.email'];
+            el.ClientAddress = el['Address.address'];
+            delete el['Client.name'];
+            delete el['Client.email'];
+            delete el['Address.address'];
+            return el;
+        }));
     });
 
 module.exports = router;

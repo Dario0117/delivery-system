@@ -8,10 +8,12 @@ module.exports = (sequelize) => {
     Address.belongsTo(Client);
     Client.hasMany(Address);
 
+    Delivery.belongsTo(Address);
     Delivery.belongsTo(Driver);
     Delivery.belongsTo(Client);
     Driver.hasMany(Delivery);
     Client.hasMany(Delivery);
+    Address.hasMany(Delivery);
 
     return {
         Driver,

@@ -114,6 +114,12 @@ Y retorna una estructura de este tipo:
 ]
 ```
 
+## Despliegue y pruebas
+
+Para ejecutar las pruebas debe haber una db de mysql encendida y crear un archivo `.env` con el formato encontrado en `env.example` y ejecutar los comandos `npm start` o `npm test` para prender el servidor o ejecutar las pruebas respectivamentes.
+
+En caso de querer desplegar con docker, se debe tener instalado el complemento `docker-compose`, y ejecutar el comando `docker-compose up`. Recuerde que debe darle permisos dde ejecución al fichero `wait-for-it.sh`.
+
 ## Modelo de bae de datos
 
 ![Modelo de bae de datos](https://github.com/Dario0117/delivery-system/blob/master/db.png)

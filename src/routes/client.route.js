@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 const { Client, Address } = require('../db');
 
 require('dotenv').config();
@@ -67,6 +68,23 @@ router.route('/login')
                 msg: "Datos de inicio de sesión incorrectos."
             });
         });
+    });
+
+router.route('/me')
+    .all(passport.authenticate('jwt', { session: false }))
+    .get( (req, res) => {
+        Client.findOne({
+            where: {
+                id: req.user.id
+            },
+            attributes: ['name', 'email'],
+            include: [{
+                 model: Address,
+                 attributes: ['id', 'address']
+            }]
+        }).then((user) => {
+            res.status(200).json(user);
+        })
     });
 
 module.exports = router;

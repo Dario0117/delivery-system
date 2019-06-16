@@ -114,12 +114,35 @@ Y retorna una estructura de este tipo:
 ]
 ```
 
+* `/me`: Este endpoint se encarga de mostrar la información del usuario conectado:
+
+**Nota:** Para poder hacer una petición a este endpoint se debe enviar el header de autorización en el siguiente formato: `Authorization: Bearer jwt_token`.
+
+Y retorna una estructura de este tipo:
+
+```json
+{
+    "name": "Un nombre",
+    "email": "Un email único",
+    "Addresses": [
+        {
+            "id": 1,
+            "address": "Un listado"
+        },
+        {
+            "id": 2,
+            "address": "De direecciones"
+        }
+    ]
+}
+```
+
 ## Despliegue y pruebas
 
 Para ejecutar las pruebas debe haber una db de mysql encendida y crear un archivo `.env` con el formato encontrado en `env.example` y ejecutar los comandos `npm start` o `npm test` para prender el servidor o ejecutar las pruebas respectivamentes.
 
 En caso de querer desplegar con docker, se debe tener instalado el complemento `docker-compose`, y ejecutar el comando `docker-compose up`. Recuerde que debe darle permisos dde ejecución al fichero `wait-for-it.sh`.
 
-## Modelo de bae de datos
+## Modelo de base de datos
 
 ![Modelo de bae de datos](https://github.com/Dario0117/delivery-system/blob/master/db.png)
